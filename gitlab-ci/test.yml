@@ -1,0 +1,16 @@
+## test.yml
+# This file contains jobs to test and lint your code.
+
+.test:
+  stage: test
+  script: &test
+    - make test
+    - make print_coverage
+  coverage: '/\(statements\)\t+(\d+\.\d+)%/'
+
+# This won't work with golangci-lint until this issue is resolved:
+# https://github.com/golangci/golangci-lint/issues/237
+.lint:
+  stage: test
+  script: &lint
+    - make lint

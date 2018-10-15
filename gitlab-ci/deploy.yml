@@ -1,0 +1,36 @@
+## ecr
+build:
+  stage: build
+  script:
+    - $(aws ecr get-login --no-include-email --region us-east-1)
+    - docker build -t $REPOSITORY_URL .
+    - docker push $REPOSITORY_URL
+  only:
+    - master
+  tags:
+    - docker
+
+## deploy go doc to s3
+# pages:
+#   stage: deploy
+#   dependencies:
+#     - test
+#   script:
+#     # No parallel tests or race detection with covermode=set
+#     - mkdir coverage
+#     - ginkgo -r -covermode=set
+#     - 'echo "mode: set" > coverage/profile'
+#     - tail -q -n+2 $(find -name "*\.coverprofile") >> coverage/profile
+#     - go tool cover -html coverage/profile -o coverage/profile.html
+#   artifacts:
+#     paths:
+#       - coverage
+#     expire_in: 3650 days
+
+## goreleaser
+artifacts:
+  stage: deploy
+  script: go build
+  artifacts:
+    paths:
+      - $CI_PROJECT_NAME
